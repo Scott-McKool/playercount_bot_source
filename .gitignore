@@ -1,0 +1,13 @@
+# ignore python cache files
+*.pyc
+cogs/__pycache__/*
+
+# ignore the config file
+playerCountBotConfig.py
+
+# ignore the json files used to store persistent data
+*.json
+
+# ignore garbage made by VSCode
+build/
+.vscode/
