@@ -3,7 +3,7 @@
 cogs/__pycache__/*
 
 # ignore the config file
-playerCountBotConfig.py
+config.py
 
 # ignore the json files used to store persistent data
 *.json

@@ -1,7 +1,7 @@
 from sharedFunctions import getServerInfo
 from discord.ext import commands, tasks
 from json import dump, loads
-import playerCountBotConfig
+from config import Settings
 import discord
 import a2s
 
@@ -70,7 +70,7 @@ class InfoCategories(commands.Cog):
         await ctx.message.delete(delay=1.5)
                 
 
-    @tasks.loop(seconds=playerCountBotConfig.REFRESH_TIME)
+    @tasks.loop(seconds=Settings.Categories.REFRESH_TIME)
     async def update_info_categories(self):
         # make sure the file exists
         open("infoCategories.json", "a")

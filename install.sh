@@ -10,15 +10,19 @@ read DISCORDTOKEN
 # make a config file for inportant variables
 echo "creating config file 'playerCountBotConfig.py'"
     cat > playerCountBotConfig.py <<CONFIGFILE
-### user settings
-# time in seconds for what nterval to refresh server info
-REFRESH_TIME = 60 
-PREFIX = "%"
-# if supplied, the address to be tracked for the bot's status
-STATUS_SERVER_ADDRESS = None # example: ("1.2.3.4",27015)
-### bot constants
-DISCORD_TOKEN = "$DISCORDTOKEN"
-BOT_DIR = "$PWD/"
+class Settings():
+    PREFIX = "%"
+    DISCORD_TOKEN = "$DISCORDTOKEN"
+    BOT_DIR = "$PWD/"
+    class Messages():
+        # time in seconds for what interval to refresh server info
+        REFRESH_TIME = 60 
+    class Categories():
+        REFRESH_TIME = 120
+    class Status():
+        REFRESH_TIME = 60
+        # if supplied, the address to be tracked for the bot's status
+        SERVER_ADDRESS = None
 CONFIGFILE
 # change permisssions of config file so that other users may not read it
 chmod 660 playerCountBotConfig.py

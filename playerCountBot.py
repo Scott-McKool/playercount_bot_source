@@ -1,26 +1,26 @@
 from sharedFunctions import getServerInfo
 from discord.ext import commands, tasks
-import playerCountBotConfig
+from config import Settings
 from time import sleep
 import discord
 import asyncio
 import urllib
 import os
 
-bot = commands.Bot(command_prefix=playerCountBotConfig.PREFIX, intents=discord.Intents.all())
+bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all())
 
 
 @bot.event
 async def on_ready():
     print("playerCountBot ready")
     # if an address for the status exists, start tracking it
-    if playerCountBotConfig.STATUS_SERVER_ADDRESS != "":
+    if Settings.Status.SERVER_ADDRESS != "":
         change_status.start()
 
-@tasks.loop(seconds=playerCountBotConfig.REFRESH_TIME)
+@tasks.loop(seconds=Settings.Status.REFRESH_TIME)
 async def change_status():
     # get the info 
-    info = getServerInfo(playerCountBotConfig.STATUS_SERVER_ADDRESS)
+    info = getServerInfo(Settings.Status.SERVER_ADDRESS)
 
     new_status: str = f"{info.player_count}/{info.max_players} currently playing"
     if info is None:
@@ -36,7 +36,7 @@ async def ping(ctx):
     await ctx.send(f"pong {round(bot.latency*1000)}ms")
 
 # load the cogs for this bot
-for file_name in os.listdir(f"{playerCountBotConfig.BOT_DIR}cogs"):
+for file_name in os.listdir(f"{Settings.BOT_DIR}cogs"):
     if(file_name.endswith(".py")):
         asyncio.run(bot.load_extension(f"cogs.{file_name[:-3]}"))
 
@@ -50,5 +50,5 @@ while(True):
         print("did not log in, not connected to internet, retrying in 10 seconds. . .")
         sleep(10)
         continue
-    bot.run(playerCountBotConfig.DISCORD_TOKEN)
+    bot.run(Settings.DISCORD_TOKEN)
     break
