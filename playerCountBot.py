@@ -22,9 +22,9 @@ async def change_status():
     # get the info 
     info = getServerInfo(Settings.Status.SERVER_ADDRESS)
 
-    new_status: str = f"{info.player_count}/{info.max_players} currently playing"
-    if info is None:
-        new_status = "Could not contact server."
+    new_status = "Could contact server."
+    if info:
+        new_status: str = f"{info.player_count}/{info.max_players} currently playing."
 
     return await bot.change_presence(activity=discord.Game(new_status))
 

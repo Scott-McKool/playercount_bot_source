@@ -3,7 +3,6 @@ from discord.ext import commands, tasks
 from json import dump, loads
 from config import Settings
 import discord
-import a2s
 
 #TODO: find a better way to stay under or deal with the api rate limit for updating a channel name ( twice per 10 mins )
 
