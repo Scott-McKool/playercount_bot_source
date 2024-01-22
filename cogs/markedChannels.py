@@ -58,11 +58,11 @@ class MarkedChannels(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    # TODO: make this function admin only
     @commands.command()
+    @commands.has_permissions(administrator = True)
     async def markChannel(self, ctx, address_string: str):
-        '''Set the channel it's sent is as a channel for a given server.\n
-        When users use the server command in a marked channel, the bot will\n
+        '''Set the channel it's sent is as a channel for a given server.
+        When users use the server command in a marked channel, the bot will
         post a message with the server's current info.'''
 
         address = await self.validateAddress(ctx, address_string)

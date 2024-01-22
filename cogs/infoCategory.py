@@ -22,8 +22,8 @@ class InfoCategories(commands.Cog):
             return None
         return (ip,port)
     
-    # TODO: make this function admin only.
     @commands.command()
+    @commands.has_permissions(administrator = True)
     async def infoCategory(self, ctx, address_string: str, *server_name):
         '''Make a category who's name is the given server's player count'''
         address = await self.validateAddress(ctx, address_string)
@@ -123,7 +123,6 @@ class InfoCategories(commands.Cog):
                     return
 
                 await category.edit(name=new_category_name)
-
 
 
     @commands.Cog.listener()
