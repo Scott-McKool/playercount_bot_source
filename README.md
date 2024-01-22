@@ -1,8 +1,8 @@
-# stockBot
+# playercount bot
 A bot for tracking the playercount on gmod servers using python-a2s
 
-## Dependencies
-python version 3.8 or newer
+## Requirements
+python version 3.8 or newer (tested on 3.8.10)
 
 a dicord bot made at https://discord.com/developers/applications and access to the bot token
 
@@ -14,7 +14,7 @@ git clone https://github.com/Scott-McKool/playercount_bot_source.git
 ```
 2. run the install script
 ```
-cd stockBot/
+cd playercount_bot_source/
 ./install.sh
 ```
 the install script will prompt you for your bot's discord token. get this token from the discord dev portal at https://discord.com/developers/applications
