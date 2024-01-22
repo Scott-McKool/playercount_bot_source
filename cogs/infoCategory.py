@@ -21,7 +21,8 @@ class InfoCategories(commands.Cog):
             await ctx.send(f"Could not parse \"{route}\" the server should be formatted as [server url or ip]:[port]")
             return None
         return (ip,port)
-        
+    
+    # TODO: make this function admin only.
     @commands.command()
     async def infoCategory(self, ctx, address_string: str, *server_name):
         '''Make a category who's name is the given server's player count'''
@@ -121,13 +122,7 @@ class InfoCategories(commands.Cog):
                 if new_category_name == current_category_name:
                     return
 
-                try:
-                    print("update")
-                    await category.edit(name=new_category_name)
-                except discord.HTTPException as e:
-                    print("exeption")
-                    print(e)
-
+                await category.edit(name=new_category_name)
 
 
 

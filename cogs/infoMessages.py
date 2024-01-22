@@ -43,6 +43,7 @@ class InfoMessages(commands.Cog):
         info = a2s.info(address)
         return await ctx.send(f"{str(info)}")
 
+    # TODO: make this function admin only
     @commands.command()
     async def infoMessage(self, ctx, address_string: str):
         '''Makes an embed that will auto update information about the a server'''
