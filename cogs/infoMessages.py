@@ -16,7 +16,7 @@ def makeServerEmbed(address):
         return embed
 
     embed = discord.Embed(title=f"{info.server_name}", colour=discord.Colour.blue())
-    embed.add_field(name=f"{info.player_count}/{info.max_players} currently playing", value = "", inline=False)
+    embed.add_field(name=f"{info.player_count}/{info.max_players} currently playing", value = f"map: {info.map_name}", inline=False)
     embed.set_footer(text=f"{address[0]}:{address[1]}\nData updates every {Settings.Messages.REFRESH_TIME} seconds")
     return embed
 
