@@ -8,6 +8,9 @@ config.py
 # ignore the json files used to store persistent data
 *.json
 
+# ignore venv
+bot_venv/
+
 # ignore garbage made by VSCode
 build/
 .vscode/
