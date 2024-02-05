@@ -90,7 +90,7 @@ class InfoTopic(commands.Cog):
             channel: discord.channel
             try:
                 channel = await self.bot.fetch_channel(channel_id)
-            except discord.errors.NotFound as e:
+            except (discord.errors.NotFound, discord.errors.Forbidden):
                     print(f"could not find channel {channel_id}, deleting it from tracked channels list. . .")
                     channels.pop(str(channel_id))
 

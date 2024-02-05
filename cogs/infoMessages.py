@@ -62,7 +62,7 @@ class InfoMessages(commands.Cog):
         persist_message = await ctx.send(embed=embed)#, view=view) 
         
         # save this message in a file to keep track of it
-        # a json text file that stores a dict of servers>channels>messages
+        # a json text file that stores a dict of channels>messages
         # make sure the file exists
         open("infoMessages.json", "a")
 
@@ -74,14 +74,11 @@ class InfoMessages(commands.Cog):
                 text = "{}"
             messages = loads(text)
 
-        # add this message to the data
-        if not str(persist_message.guild.id) in messages:
-            messages[str(persist_message.guild.id)] = {}
-
-        if not str(persist_message.channel.id) in messages[str(persist_message.guild.id)]:
-            messages[str(persist_message.guild.id)][str(persist_message.channel.id)] = {}
-
-        messages[str(persist_message.guild.id)][str(persist_message.channel.id)][str(persist_message.id)] = address
+        # ensure this channel is in the dict
+        if not str(persist_message.channel.id) in messages:
+            messages[str(persist_message.channel.id)] = {}
+        # store the message info in the dict
+        messages[str(persist_message.channel.id)][str(persist_message.id)] = address
 
         # write back to the file
         with open("infoMessages.json", "wt") as outFile:
@@ -101,25 +98,32 @@ class InfoMessages(commands.Cog):
                 text = "{}"
             messages: dict = loads(text)
             
-        #TODO: find a better way of looping through the stored messages
+        channels_dict: dict
+        channel_id: int
+        for channel_id, channels_dict in messages.items():
+            message_id: int
+            message_address: list
+            message_channel: discord.channel
+            try:
+                message_channel = await self.bot.fetch_channel(channel_id)
+            except (discord.errors.NotFound, discord.errors.Forbidden):
+                print(f"could not find channel {channel_id}, deleting it from tracked message list. . .")
+                messages.pop(str(channel_id))
 
-        # loop through every stored message
-        guilds_dict: dict
-        guild_id: int
-        for guild_id, guilds_dict in messages.items():
-            channels_dict: dict
-            channel_id: int
+                # write any changes made back to the file
+                with open("infoMessages.json", "wt") as outFile:
+                    dump(messages, outFile, indent=4)
 
-            for channel_id, channels_dict in guilds_dict.items():
-                message_id: int
-                message_address: list
-                message_channel: discord.channel
+                # call the function again to sort out the rest of the messages
+                return await self.update_info_messages()
+            
+            for message_id, message_address in channels_dict.items():
+                message:discord.message
                 try:
-                    message_channel = await self.bot.fetch_channel(channel_id)
-                except discord.errors.NotFound as e:
-                    print(e)
-                    print(f"could not find channel {channel_id}, deleting it from tracked message list. . .")
-                    messages[str(guild_id)].pop(str(channel_id))
+                    message = await message_channel.fetch_message(message_id)
+                except (discord.errors.NotFound, discord.errors.Forbidden):
+                    print(f"could not find message {message_id}, deleting it from tracked message list. . .")
+                    messages[str(channel_id)].pop(message_id)
 
                     # write any changes made back to the file
                     with open("infoMessages.json", "wt") as outFile:
@@ -127,37 +131,21 @@ class InfoMessages(commands.Cog):
 
                     # call the function again to sort out the rest of the messages
                     return await self.update_info_messages()
+
+                else:
                 
-                for message_id, message_address in channels_dict.items():
-                    message:discord.message
-                    try:
-                        message = await message_channel.fetch_message(message_id)
-                    except discord.errors.NotFound as e:
-                        print(e)
-                        print(f"could not find message {message_id}, deleting it from tracked message list. . .")
-                        messages[str(guild_id)][str(channel_id)].pop(message_id)
-
-                        # write any changes made back to the file
-                        with open("infoMessages.json", "wt") as outFile:
-                            dump(messages, outFile, indent=4)
-
-                        # call the function again to sort out the rest of the messages
-                        return await self.update_info_messages()
-
-                    else:
-                    
-                        # retreive new info about the server
-                        address = (message_address[0], message_address[1])
-                        # update message with new info
-                        # make a new embed for the message
-                        embed = makeServerEmbed(address)
-                        # get the message's current content
-                        current_embed = message.embeds[0]
-                        # only edit the message if the new embed is different from the old one
-                        if current_embed == embed:
-                            continue
-                        # edit the message
-                        await message.edit(embed=embed)
+                    # retreive new info about the server
+                    address = (message_address[0], message_address[1])
+                    # update message with new info
+                    # make a new embed for the message
+                    embed = makeServerEmbed(address)
+                    # get the message's current content
+                    current_embed = message.embeds[0]
+                    # only edit the message if the new embed is different from the old one
+                    if current_embed == embed:
+                        continue
+                    # edit the message
+                    await message.edit(embed=embed)
 
 
     @commands.Cog.listener()

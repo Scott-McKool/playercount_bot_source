@@ -86,8 +86,7 @@ class InfoCategories(commands.Cog):
             category: discord.CategoryChannel
             try:
                 category = await self.bot.fetch_channel(category_id)
-            except discord.errors.NotFound as e:
-                    print(e)
+            except (discord.errors.NotFound, discord.errors.Forbidden):
                     print(f"could not find category {category_id}, deleting it from tracked categories list. . .")
                     categories.pop(str(category_id))
 
