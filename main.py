@@ -9,12 +9,11 @@ import urllib
 
 bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all())
 
-
 @bot.event
 async def on_ready():
     print("playerCountBot ready")
     # if an address for the status exists, start tracking it
-    if Settings.Status.SERVER_ADDRESS != "":
+    if Settings.Status.SERVER_ADDRESS != None:
         change_status.start()
 
 @tasks.loop(seconds=Settings.Status.REFRESH_TIME)
