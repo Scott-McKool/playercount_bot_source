@@ -8,8 +8,8 @@ echo "get the bot's token from the discord dev portal and enter it here: "
 read DISCORDTOKEN 
 
 # make a config file for inportant variables
-echo "creating config file 'playerCountBotConfig.py'"
-    cat > playerCountBotConfig.py <<CONFIGFILE
+echo "creating config file 'config.py'"
+    cat > config.py <<CONFIGFILE
 class Settings():
     PREFIX = "%"
     DISCORD_TOKEN = "$DISCORDTOKEN"
@@ -27,7 +27,7 @@ class Settings():
         SERVER_ADDRESS = None
 CONFIGFILE
 # change permisssions of config file so that other users may not read it
-chmod 660 playerCountBotConfig.py
+chmod 660 config.py
 
 ### install requirements
 echo "installing pip with apt. . ."

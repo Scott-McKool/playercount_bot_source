@@ -1,11 +1,11 @@
 from sharedFunctions import getServerInfo
 from discord.ext import commands, tasks
 from config import Settings
+from os import listdir
 from time import sleep
 import discord
 import asyncio
 import urllib
-import os
 
 bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all())
 
@@ -36,7 +36,7 @@ async def ping(ctx):
     await ctx.send(f"pong {round(bot.latency*1000)}ms")
 
 # load the cogs for this bot
-for file_name in os.listdir(f"{Settings.BOT_DIR}cogs"):
+for file_name in listdir(f"{Settings.BOT_DIR}cogs"):
     if(file_name.endswith(".py")):
         asyncio.run(bot.load_extension(f"cogs.{file_name[:-3]}"))
 

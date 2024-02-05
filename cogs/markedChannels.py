@@ -88,7 +88,7 @@ class MarkedChannels(commands.Cog):
         with open("markedChannels.json", "wt") as outFile:
             dump(channels, outFile, indent=4)
 
-        await ctx.send(f"chnnel now set to track {address}")
+        await ctx.send(f"channel now set to track {address}")
 
     @commands.Cog.listener()
     async def on_ready(self):

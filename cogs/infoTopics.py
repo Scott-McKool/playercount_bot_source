@@ -66,7 +66,7 @@ class InfoTopic(commands.Cog):
         with open("infoTopics.json", "wt") as outFile:
             dump(channels, outFile, indent=4)
 
-        await ctx.send(f"chnnel topic now set to track {address}")
+        await ctx.send(f"channel topic now set to track {address}")
 
         try:
             await self.update_topic(address, ctx.channel)
