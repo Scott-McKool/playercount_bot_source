@@ -1,6 +1,5 @@
-from sharedFunctions import getServerInfo
+from sharedFunctions import getServerInfo, json_read, json_write
 from discord.ext import commands
-from json import dump, loads
 import discord
 
 def makeServerEmbed(address):
@@ -36,16 +35,7 @@ class MarkedChannels(commands.Cog):
     @commands.command(aliases=['join'])
     async def server(self, ctx):
 
-        # make sure the file exists
-        open("markedChannels.json", "a")
-
-        # load the existing file
-        with open("markedChannels.json", "rt") as inFile:
-            text = inFile.read()
-            # if the file is empty replace it with an empty dict so that it is valid for loads()
-            if not text:
-                text = "{}"
-            channels: dict = loads(text)
+        channels: dict = json_read("markedChannels.json")
 
         # look for the current channel in the file
         address = channels.get(str(ctx.channel.id), None)
@@ -69,24 +59,12 @@ class MarkedChannels(commands.Cog):
         if not address:
             return
         
-        # save this channel and the server it's dedicated to
-        # make sure the file exists
-        open("markedChannels.json", "a")
-
-        # load the existing file
-        with open("markedChannels.json", "rt") as inFile:
-            text = inFile.read()
-            # if the file is empty replace it with an empty dict so that it is valid for loads()
-            if not text:
-                text = "{}"
-            channels: dict = loads(text)
+        channels: dict = json_read("markedChannels.json")
 
         # add this channel to the data
         channels[str(ctx.channel.id)] = address
 
-        # write back to the file
-        with open("markedChannels.json", "wt") as outFile:
-            dump(channels, outFile, indent=4)
+        json_write("markedChannels.json", channels)
 
         await ctx.send(f"channel now set to track {address}")
 

@@ -1,4 +1,5 @@
 from socket import gaierror, timeout
+from json import dump, loads
 from time import time
 import a2s
 
@@ -28,3 +29,26 @@ def getServerInfo(address: tuple, use_cache = True, cache_time = 30):
     except (gaierror, timeout):
         return None
     
+
+# functions for reading and writing json files to reduce reused code
+    
+def json_read(filename: str) -> dict:
+    '''takes in the filename of the json file and returns a dict of it's contents
+    returns {} on a new or empty file'''
+    # use append mode to make the file if it does not exist
+    # but also don't change anything if it already exists
+    open(filename, "a")
+
+    # load the existing file
+    with open(filename, "rt") as inFile:
+        text = inFile.read()
+        # if the file is empty replace it with an empty dict so that it is valid for loads()
+        if not text:
+            text = "{}"
+        # return the json dict
+        return loads(text)
+    
+def json_write(filename: str, data: dict):
+    '''dump dict to a json formatted file'''
+    with open(filename, "wt") as outFile:
+        dump(data, outFile, indent=4)

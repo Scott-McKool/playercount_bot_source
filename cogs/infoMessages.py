@@ -1,6 +1,5 @@
-from sharedFunctions import getServerInfo
+from sharedFunctions import getServerInfo, json_read, json_write
 from discord.ext import commands, tasks
-from json import dump, loads
 from config import Settings
 import discord
 import a2s
@@ -64,15 +63,7 @@ class InfoMessages(commands.Cog):
         # save this message in a file to keep track of it
         # a json text file that stores a dict of channels>messages
         # make sure the file exists
-        open("infoMessages.json", "a")
-
-        # load the existing file
-        with open("infoMessages.json", "rt") as inFile:
-            text = inFile.read()
-            # if the file is empty replace it with an empty dict so that it is valid for loads()
-            if not text:
-                text = "{}"
-            messages = loads(text)
+        messages: dict = json_read("infoMessages.json")
 
         # ensure this channel is in the dict
         if not str(persist_message.channel.id) in messages:
@@ -81,22 +72,15 @@ class InfoMessages(commands.Cog):
         messages[str(persist_message.channel.id)][str(persist_message.id)] = address
 
         # write back to the file
-        with open("infoMessages.json", "wt") as outFile:
-            dump(messages, outFile, indent=4)
+        json_write("infoMessages.json", messages)
 
         # delete the message command
         await ctx.message.delete(delay=1.5)
 
     @tasks.loop(seconds=Settings.Messages.REFRESH_TIME)
     async def update_info_messages(self):
-        # make sure the file exists
-        open("infoMessages.json", "a")
-        # read the file of all the info messages
-        with open("infoMessages.json", "rt") as inFile:
-            text = inFile.read()
-            if not text:
-                text = "{}"
-            messages: dict = loads(text)
+
+        messages: dict = json_read("infoMessages.json")
             
         channels_dict: dict
         channel_id: int
@@ -111,8 +95,7 @@ class InfoMessages(commands.Cog):
                 messages.pop(str(channel_id))
 
                 # write any changes made back to the file
-                with open("infoMessages.json", "wt") as outFile:
-                    dump(messages, outFile, indent=4)
+                json_write("infoMessages.json", messages)
 
                 # call the function again to sort out the rest of the messages
                 return await self.update_info_messages()
@@ -126,8 +109,7 @@ class InfoMessages(commands.Cog):
                     messages[str(channel_id)].pop(message_id)
 
                     # write any changes made back to the file
-                    with open("infoMessages.json", "wt") as outFile:
-                        dump(messages, outFile, indent=4)
+                    json_write("infoMessages.json", messages)
 
                     # call the function again to sort out the rest of the messages
                     return await self.update_info_messages()

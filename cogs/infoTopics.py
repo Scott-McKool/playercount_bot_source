@@ -1,6 +1,5 @@
-from sharedFunctions import getServerInfo
+from sharedFunctions import getServerInfo, json_read, json_write
 from discord.ext import commands, tasks
-from json import dump, loads
 from config import Settings
 import discord
 
@@ -48,23 +47,13 @@ class InfoTopic(commands.Cog):
             return
         
         # save this channel and the server it's dedicated to
-        # make sure the file exists
-        open("infoTopics.json", "a")
-
-        # load the existing file
-        with open("infoTopics.json", "rt") as inFile:
-            text = inFile.read()
-            # if the file is empty replace it with an empty dict so that it is valid for loads()
-            if not text:
-                text = "{}"
-            channels: dict = loads(text)
+        channels: dict = json_read("infoTopics.json")
 
         # add this channel to the data
         channels[str(ctx.channel.id)] = address
 
         # write back to the file
-        with open("infoTopics.json", "wt") as outFile:
-            dump(channels, outFile, indent=4)
+        json_write("infoTopics.json", channels)
 
         await ctx.send(f"channel topic now set to track {address}")
 
@@ -76,14 +65,8 @@ class InfoTopic(commands.Cog):
 
     @tasks.loop(seconds=Settings.Topics.REFRESH_TIME)
     async def update_info_topics(self):
-        # make sure the file exists
-        open("infoTopics.json", "a")
-        # read the file of all the info channels
-        with open("infoTopics.json", "rt") as inFile:
-            text = inFile.read()
-            if not text:
-                text = "{}"
-            channels: dict = loads(text)
+
+        channels: dict = json_read("infoTopics.json")
         
         # for every channel with a info topic
         for channel_id, channel_info in channels.items():
@@ -94,9 +77,7 @@ class InfoTopic(commands.Cog):
                     print(f"could not find channel {channel_id}, deleting it from tracked channels list. . .")
                     channels.pop(str(channel_id))
 
-                    # write any changes made back to the file
-                    with open("infoTopics.json", "wt") as outFile:
-                        dump(channels, outFile, indent=4)
+                    json_write("infoTopics.json", channels)
 
                     # call the function again to sort out the rest of the messages
                     # must do this instead of using 'continue' because the contents of the 

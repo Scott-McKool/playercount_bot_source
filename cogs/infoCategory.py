@@ -1,6 +1,5 @@
-from sharedFunctions import getServerInfo
+from sharedFunctions import getServerInfo, json_read, json_write
 from discord.ext import commands, tasks
-from json import dump, loads
 from config import Settings
 import discord
 
@@ -43,25 +42,13 @@ class InfoCategories(commands.Cog):
                                                   reason=f"player count tracking category made by {ctx.author}")
         
         # save this message in a file to keep track of it
-        # a json text file that stores a dict of categories
-        # make sure the file exists
-        open("infoCategories.json", "a")
-
-        # load the existing file
-        with open("infoCategories.json", "rt") as inFile:
-            text = inFile.read()
-            # if the file is empty replace it with an empty dict so that it is valid for loads()
-            if not text:
-                text = "{}"
-            categories = loads(text)
-
+        categories: dict = json_read("infoCategories.json")
 
         # save the category name and address
         categories[str(category.id)] = (address, server_name)
 
         # write back to the file
-        with open("infoCategories.json", "wt") as outFile:
-            dump(categories, outFile, indent=4)
+        json_write("infoCategories.json", categories)
 
         # delete the message command
         await ctx.message.delete(delay=1.5)
@@ -69,14 +56,8 @@ class InfoCategories(commands.Cog):
 
     @tasks.loop(seconds=Settings.Categories.REFRESH_TIME)
     async def update_info_categories(self):
-        # make sure the file exists
-        open("infoCategories.json", "a")
-        # read the file of all the info categories
-        with open("infoCategories.json", "rt") as inFile:
-            text = inFile.read()
-            if not text:
-                text = "{}"
-            categories: dict = loads(text)
+
+        categories: dict = json_read("infoCategories.json")
 
         # for every category
         category_id: int
@@ -91,8 +72,7 @@ class InfoCategories(commands.Cog):
                     categories.pop(str(category_id))
 
                     # write any changes made back to the file
-                    with open("infoCategories.json", "wt") as outFile:
-                        dump(categories, outFile, indent=4)
+                    json_write("infoCategories.json", categories)
 
                     # call the function again to sort out the rest of the messages
                     return await self.update_info_categories()
