@@ -31,11 +31,14 @@ chmod 660 config.py
 
 ### install requirements
 echo "installing pip with apt. . ."
-sudo apt update && sudo apt install python3-pip -y || { echo "failed to install python3-pip, aborting. . ."; exit 1; }
+sudo apt update && sudo apt install python3-pip python3.8-venv -y || { echo "failed to install pip and venv, aborting. . ."; exit 1; }
 
-# install python packages
+# make a new venv for the bot
+python3.8 -m venv bot_venv
+
+# install python packages within the venv
 echo "installing requirements with pip3. . ."
-pip3 install -r requirements.txt || { echo "failed to install pip packages, aborting. . ."; exit 1; }
+./bot_venv/bin/python3 -m pip install -r requirements.txt || { echo "failed to install pip packages, aborting. . ."; exit 1; }
 
 ### use systemd to run playerCountBot on system startup
 echo "Setting up playerCountBot to run on system startup"
@@ -49,7 +52,7 @@ After=network-online.target
 [Service]
 User=$(whoami)
 Group=$(id -gn)
-ExecStart=/usr/bin/python3 "$PWD/main.py"
+ExecStart="$PWD/bot_venv/bin/python3" "$PWD/main.py"
 [Install]
 WantedBy=multi-user.target
 UNITFILE
