@@ -38,18 +38,18 @@ echo "installing requirements with pip3. . ."
 pip3 install -r requirements.txt || { echo "failed to install pip packages, aborting. . ."; exit 1; }
 
 ### use systemd to run playerCountBot on system startup
-echo "Setting up playerCountBot.py to run on system startup"
+echo "Setting up playerCountBot to run on system startup"
 # make a unit file for this systemd service
 echo "creating unit file 'playerCountBot.service'"
     cat > playerCountBot.service <<UNITFILE
 [Unit]
-Description=Runs playerCountBot.py script on startup
+Description=Runs playerCountBot script on startup
 Wants=network-online.target
 After=network-online.target
 [Service]
 User=$(whoami)
 Group=$(id -gn)
-ExecStart=/usr/bin/python3 "$PWD/playerCountBot.py"
+ExecStart=/usr/bin/python3 "$PWD/main.py"
 [Install]
 WantedBy=multi-user.target
 UNITFILE
@@ -63,7 +63,7 @@ echo "enabling playerCountBot.service"
 sudo systemctl enable playerCountBot.service
 
 echo "playerCountBot service has been added and enabled"
-echo "playerCountBot.py will be automatically run on startup from now on"
+echo "playerCountBot will be automatically run on startup from now on"
 echo ""
 echo "to dissable running on startup type 'sudo systemctl disable playerCountBot.service'"
 echo ""
