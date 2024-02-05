@@ -18,7 +18,9 @@ class Settings():
         # time in seconds for what interval to refresh server info
         REFRESH_TIME = 60 
     class Categories():
-        REFRESH_TIME = 120
+        REFRESH_TIME = 300
+    class Topics():
+        REFRESH_TIME = 300
     class Status():
         REFRESH_TIME = 60
         # if supplied, the address to be tracked for the bot's status

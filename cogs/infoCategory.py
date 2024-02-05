@@ -89,7 +89,7 @@ class InfoCategories(commands.Cog):
             except discord.errors.NotFound as e:
                     print(e)
                     print(f"could not find category {category_id}, deleting it from tracked categories list. . .")
-                    categories.pop(category_id)
+                    categories.pop(str(category_id))
 
                     # write any changes made back to the file
                     with open("infoCategories.json", "wt") as outFile:

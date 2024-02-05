@@ -2,6 +2,9 @@ from socket import gaierror, timeout
 from time import time
 import a2s
 
+# this function is stored once and shared so what all the different cogs can benefit from using the same cache
+# would've stored this in playerCountBot.py but that causes circular dependencies (the cogs are imported by playerCountBot.py)
+
 # the cache stores the results from getServerInfo as well as a unix timestamp of then the data was read
 #
 #   { ("address", port) : (timestamp, {info}) } 
