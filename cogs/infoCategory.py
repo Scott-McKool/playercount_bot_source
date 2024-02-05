@@ -43,7 +43,7 @@ class InfoCategories(commands.Cog):
                                                   reason=f"player count tracking category made by {ctx.author}")
         
         # save this message in a file to keep track of it
-        # a json text file that stores a dict of servers>categories
+        # a json text file that stores a dict of categories
         # make sure the file exists
         open("infoCategories.json", "a")
 
@@ -55,12 +55,9 @@ class InfoCategories(commands.Cog):
                 text = "{}"
             categories = loads(text)
 
-        # save this category to the dict
-        if not str(category.guild.id) in categories:
-            categories[str(category.guild.id)] = {}
 
         # save the category name and address
-        categories[str(category.guild.id)][str(category.id)] = (address, server_name)
+        categories[str(category.id)] = (address, server_name)
 
         # write back to the file
         with open("infoCategories.json", "wt") as outFile:
@@ -80,49 +77,44 @@ class InfoCategories(commands.Cog):
             if not text:
                 text = "{}"
             categories: dict = loads(text)
-        
-        # for every guild
-        guilds_dict: dict
-        guild_id: int
-        for guild_id, guilds_dict in categories.items():
-            # for every category
-            channel_id: int
-            category_info: tuple
-            for category_id, category_info in guilds_dict.items():
 
-                category: discord.CategoryChannel
-                try:
-                    category = await self.bot.fetch_channel(category_id)
-                except discord.errors.NotFound as e:
-                        print(e)
-                        print(f"could not find category {category_id}, deleting it from tracked categories list. . .")
-                        categories[str(guild_id)][str(channel_id)].pop(category_id)
+        # for every category
+        category_id: int
+        category_info: tuple
+        for category_id, category_info in categories.items():
 
-                        # write any changes made back to the file
-                        with open("infoCategories.json", "wt") as outFile:
-                            dump(categories, outFile, indent=4)
+            category: discord.CategoryChannel
+            try:
+                category = await self.bot.fetch_channel(category_id)
+            except discord.errors.NotFound as e:
+                    print(e)
+                    print(f"could not find category {category_id}, deleting it from tracked categories list. . .")
+                    categories.pop(category_id)
 
-                        # call the function again to sort out the rest of the messages
-                        return await self.update_info_categories()
+                    # write any changes made back to the file
+                    with open("infoCategories.json", "wt") as outFile:
+                        dump(categories, outFile, indent=4)
 
-                address, server_name  = category_info
-                address = tuple(address)
-                # get the given server's info
-                info = getServerInfo(address)
-                
-                new_category_name = f"[offline]] {server_name}"
-                
-                if info:
-                    new_category_name = f"[{info.player_count}/{info.max_players}] {server_name}"
+                    # call the function again to sort out the rest of the messages
+                    return await self.update_info_categories()
 
-                # get the info currently displayed on the category
-                current_category_name = category.name
-                # if the new name is the same as the current name don't bother editing the name ( to save on api calls )
-                if new_category_name == current_category_name:
-                    return
+            address, server_name  = category_info
+            address = tuple(address)
+            # get the given server's info
+            info = getServerInfo(address)
+            
+            new_category_name = f"[offline]] {server_name}"
+            
+            if info:
+                new_category_name = f"[{info.player_count}/{info.max_players}] {server_name}"
 
-                await category.edit(name=new_category_name)
+            # get the info currently displayed on the category
+            current_category_name = category.name
+            # if the new name is the same as the current name don't bother editing the name ( to save on api calls )
+            if new_category_name == current_category_name:
+                continue
 
+            await category.edit(name=new_category_name)
 
     @commands.Cog.listener()
     async def on_ready(self):
