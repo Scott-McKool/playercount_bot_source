@@ -52,7 +52,7 @@ After=network-online.target
 [Service]
 User=$(whoami)
 Group=$(id -gn)
-WorkingDirectory="$PWD"
+WorkingDirectory=$PWD/
 ExecStart="$PWD/bot_venv/bin/python3" "$PWD/main.py"
 [Install]
 WantedBy=multi-user.target
