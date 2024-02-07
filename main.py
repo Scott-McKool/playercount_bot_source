@@ -1,3 +1,5 @@
+#!bot_venv/bin/python3
+
 from sharedFunctions import getServerInfo
 from discord.ext import commands, tasks
 from config import Settings
