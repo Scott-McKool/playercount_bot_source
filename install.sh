@@ -41,7 +41,11 @@ echo "installing requirements with pip3. . ."
 ./bot_venv/bin/python3 -m pip install -r requirements.txt || { echo "failed to install pip packages, aborting. . ."; exit 1; }
 
 ### use systemd to run playerCountBot on system startup
-echo "Setting up playerCountBot to run on system startup"
+# ask the user if they want run on startup
+printf 'Should playercountBot run on system startup [y/N]? '
+read SHOULDSTARTUP
+[ "$SHOULDSTARTUP" != "${SHOULDSTARTUP#[Yy]}" ] && echo "Setting up to run on startup. . ." || { echo "Installation complete."; exit 0; }
+
 # make a unit file for this systemd service
 echo "creating unit file 'playerCountBot.service'"
     cat > playerCountBot.service <<UNITFILE
