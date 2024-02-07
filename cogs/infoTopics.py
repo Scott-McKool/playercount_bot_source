@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write
+from sharedFunctions import getServerInfo, json_read, json_write, validateAddress
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -9,15 +9,6 @@ class InfoTopic(commands.Cog):
     def __init__(self, client) -> None:
         super().__init__()
         self.bot = client
-
-    async def validateAddress(self, ctx, route: str):
-        try:
-            ip, port = route.split(":")
-            port = int(port)
-        except ValueError:
-            await ctx.send(f"Could not parse \"{route}\" the server should be formatted as [server url or ip]:[port]")
-            return None
-        return (ip,port)
     
     async def update_topic(self, address: tuple, channel: discord.channel):
         # get the given server's info
@@ -42,7 +33,7 @@ class InfoTopic(commands.Cog):
     async def infoTopic(self, ctx, address_string: str):
         '''Set this channel to display server info in the topic of the channel this command is run in'''
 
-        address = await self.validateAddress(ctx, address_string)
+        address = await validateAddress(ctx, address_string)
         if not address:
             return
         

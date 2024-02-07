@@ -30,6 +30,17 @@ def getServerInfo(address: tuple, use_cache = True, cache_time = 30):
         return None
     
 
+async def validateAddress(ctx, route: str):
+    '''Used for validating an address passed by a user in a command.
+    a valid adress should be formatted as address:port'''
+    try:
+        ip, port = route.split(":")
+        port = int(port)
+    except ValueError:
+        await ctx.send(f"Could not parse \"{route}\" the server should be formatted as [server url or ip]:[port]")
+        return None
+    return (ip,port)
+
 # functions for reading and writing json files to reduce reused code
     
 def json_read(filename: str) -> dict:
