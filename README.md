@@ -26,15 +26,13 @@ Usage `%infoTopic address:port` <br>
 ## Steps To Install
 This has only been tested on ubuntu and raspberry pi OS, though it should work for all debian based distributions that have apt (and systemd for running on startup). <br>
 
-This install script requires that you already have a bot resisted with discord and have access to the bot token. <br>
+This install script requires that you already have a bot registered with discord and have access to the bot token. <br>
 You can make a bot/access its token at https://discord.com/developers/applications<br>
 
-1. clone the source code
+Clone the source code & run the install script.
 ```
 git clone https://github.com/Scott-McKool/playercount_bot_source.git
-```
-2. run the install script
-```
 cd playercount_bot_source/
 ./install.sh
+
 ```
