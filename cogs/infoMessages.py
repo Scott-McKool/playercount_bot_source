@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write
+from sharedFunctions import getServerInfo, json_read, json_write, validateAddress
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -24,19 +24,10 @@ class InfoMessages(commands.Cog):
     def __init__(self, client) -> None:
         super().__init__()
         self.bot = client
-
-    async def validateAddress(self, ctx, route: str):
-        try:
-            ip, port = route.split(":")
-            port = int(port)
-        except ValueError:
-            await ctx.send(f"Could not parse \"{route}\" the server should be formatted as [server url or ip]:[port]")
-            return None
-        return (ip,port)
         
     @commands.command()
     async def info(self, ctx, route : str):
-        address = await self.validateAddress(ctx, route)
+        address = await validateAddress(ctx, route)
         if not address:
             return
         info = a2s.info(address)
@@ -46,7 +37,7 @@ class InfoMessages(commands.Cog):
     @commands.has_permissions(administrator = True)
     async def infoMessage(self, ctx, address_string: str):
         '''Makes an embed that will auto update information about a server'''
-        address = await self.validateAddress(ctx, address_string)
+        address = await validateAddress(ctx, address_string)
         if not address:
             return
         

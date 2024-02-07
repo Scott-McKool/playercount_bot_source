@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write
+from sharedFunctions import getServerInfo, json_read, json_write, validateAddress
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -10,21 +10,12 @@ class InfoCategories(commands.Cog):
     def __init__(self, client) -> None:
         super().__init__()
         self.bot = client
-
-    async def validateAddress(self, ctx, route: str):
-        try:
-            ip, port = route.split(":")
-            port = int(port)
-        except ValueError:
-            await ctx.send(f"Could not parse \"{route}\" the server should be formatted as [server url or ip]:[port]")
-            return None
-        return (ip,port)
     
     @commands.command()
     @commands.has_permissions(administrator = True)
     async def infoCategory(self, ctx, address_string: str, *server_name):
         '''Make a category who's name is the given server's player count'''
-        address = await self.validateAddress(ctx, address_string)
+        address = await validateAddress(ctx, address_string)
         if not address:
             return
         # get the given server's info
