@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write, validateAddress
+from sharedFunctions import getServerInfo, json_read, json_write, validateAddress, admin_check
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -29,9 +29,10 @@ class InfoTopic(commands.Cog):
 
 
     @commands.command()
-    @commands.has_permissions(administrator = True)
     async def infoTopic(self, ctx, address_string: str):
         '''Set this channel to display server info in the topic of the channel this command is run in'''
+        if not await admin_check(ctx):
+            return
 
         address = await validateAddress(ctx, address_string)
         if not address:

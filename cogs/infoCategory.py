@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write, validateAddress
+from sharedFunctions import getServerInfo, json_read, json_write, validateAddress, admin_check
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -12,9 +12,11 @@ class InfoCategories(commands.Cog):
         self.bot = client
     
     @commands.command()
-    @commands.has_permissions(administrator = True)
     async def infoCategory(self, ctx, address_string: str, *server_name):
         '''Make a category who's name is the given server's player count'''
+        if not await admin_check(ctx):
+            return
+
         address = await validateAddress(ctx, address_string)
         if not address:
             return

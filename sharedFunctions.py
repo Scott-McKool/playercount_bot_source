@@ -29,6 +29,14 @@ def getServerInfo(address: tuple, use_cache = True, cache_time = 30):
     except (gaierror, timeout):
         return None
     
+async def admin_check(ctx) -> bool:
+    '''This function checks for if a user is an admin, if not it sends a message to the ctx.channel and returns false.\n
+    if they are an admin, this returns true.'''
+    # is the author an admin
+    if ctx.author.guild_permissions.administrator:
+        return True
+    await ctx.send("Only administrators may use this command")
+    return False
 
 async def validateAddress(ctx, route: str):
     '''Used for validating an address passed by a user in a command.
