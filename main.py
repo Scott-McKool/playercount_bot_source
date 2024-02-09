@@ -9,7 +9,7 @@ import discord
 import asyncio
 import urllib
 
-bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all())
+bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all(), max_ratelimit_timeout=30)
 
 @bot.event
 async def on_ready():

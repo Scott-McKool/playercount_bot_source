@@ -86,7 +86,11 @@ class InfoCategories(commands.Cog):
             if new_category_name == current_category_name:
                 continue
 
-            await category.edit(name=new_category_name)
+            try:
+                await category.edit(name=new_category_name)
+            except discord.RateLimited:
+                print(f"Rate limited when updating category {category_id}, skipping for now. . .")
+                continue
 
     @commands.Cog.listener()
     async def on_ready(self):

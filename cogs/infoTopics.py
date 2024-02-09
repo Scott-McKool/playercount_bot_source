@@ -79,7 +79,11 @@ class InfoTopic(commands.Cog):
             address = channel_info
             address = tuple(address)
             
-            await self.update_topic(address, channel)
+            try:
+                await self.update_topic(address, channel)
+            except discord.RateLimited:
+                print(f"Rate limited when updating channel topic for {channel_id}, skipping for now. . .")
+                continue
 
 
     @commands.Cog.listener()
