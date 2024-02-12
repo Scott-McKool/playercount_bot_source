@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write, validateAddress, admin_check
+from sharedFunctions import getServerInfo, json_read, json_write, validate_address, admin_only
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -29,14 +29,13 @@ class InfoTopic(commands.Cog):
 
 
     @commands.command()
+    @validate_address
+    @admin_only
     async def infoTopic(self, ctx, address_string: str):
         '''Set this channel to display server info in the topic of the channel this command is run in'''
-        if not await admin_check(ctx):
-            return
 
-        address = await validateAddress(ctx, address_string)
-        if not address:
-            return
+        address = address_string.split(":")
+        address = (address[0], int(address[1]))
         
         # save this channel and the server it's dedicated to
         channels: dict = json_read("infoTopics.json")
@@ -79,7 +78,11 @@ class InfoTopic(commands.Cog):
             address = channel_info
             address = tuple(address)
             
-            await self.update_topic(address, channel)
+            try:
+                await self.update_topic(address, channel)
+            except discord.RateLimited:
+                print(f"Rate limited when updating channel topic for {channel_id}, skipping for now. . .")
+                continue
 
 
     @commands.Cog.listener()

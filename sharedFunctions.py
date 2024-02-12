@@ -1,4 +1,5 @@
 from socket import gaierror, timeout
+from discord.ext import commands
 from json import dump, loads
 from time import time
 import a2s
@@ -38,16 +39,26 @@ async def admin_check(ctx) -> bool:
     await ctx.send("Only administrators may use this command")
     return False
 
-async def validateAddress(ctx, route: str):
+admin_only = commands.check(admin_check)
+
+
+async def validateAddress(ctx):
     '''Used for validating an address passed by a user in a command.
     a valid adress should be formatted as address:port'''
     try:
-        ip, port = route.split(":")
+        # get the address sring from the text passed for the command
+        # this is bad because it assumes the address will always be the second argument
+        # but for some reason ctx.args is empty here so i am doing this based off of the message :(
+        address_string = ctx.message.content.split(" ")[1]
+        _ip, port = address_string.split(":")
         port = int(port)
+        return True
     except ValueError:
-        await ctx.send(f"Could not parse \"{route}\" the server should be formatted as [server url or ip]:[port]")
-        return None
-    return (ip,port)
+        await ctx.send(f"Could not parse \"{address_string}\" the server should be formatted as [server url or ip]:[port]")
+        return False
+
+validate_address = commands.check(validateAddress)
+
 
 # functions for reading and writing json files to reduce reused code
     

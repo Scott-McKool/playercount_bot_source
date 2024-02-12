@@ -1,5 +1,6 @@
 #!bot_venv/bin/python3
 
+from discord.ext.commands.errors import CheckFailure
 from sharedFunctions import getServerInfo
 from discord.ext import commands, tasks
 from config import Settings
@@ -9,7 +10,7 @@ import discord
 import asyncio
 import urllib
 
-bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all())
+bot = commands.Bot(command_prefix=Settings.PREFIX, intents=discord.Intents.all(), max_ratelimit_timeout=30)
 
 @bot.event
 async def on_ready():
@@ -35,6 +36,14 @@ async def ping(ctx):
     Gets playerCountBot's latency 
     '''
     await ctx.send(f"pong {round(bot.latency*1000)}ms")
+
+@bot.event
+async def on_command_error(ctx, error):
+    # silence all check failures
+    if isinstance(error, CheckFailure):
+        return
+    # anything else gets raised
+    raise(error)
 
 # load the cogs for this bot
 for file_name in listdir(f"{Settings.BOT_DIR}cogs"):

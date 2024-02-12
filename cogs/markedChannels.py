@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write, validateAddress, admin_check
+from sharedFunctions import getServerInfo, json_read, json_write, validate_address, admin_only
 from discord.ext import commands
 import discord
 
@@ -40,16 +40,15 @@ class MarkedChannels(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @validate_address
+    @admin_only
     async def markChannel(self, ctx, address_string: str):
         '''Set the channel it's sent is as a channel for a given server.
         When users use the server command in a marked channel, the bot will
         post a message with the server's current info.'''
-        if not await admin_check(ctx):
-            return
 
-        address = await validateAddress(ctx, address_string)
-        if not address:
-            return
+        address = address_string.split(":")
+        address = (address[0], int(address[1]))
         
         channels: dict = json_read("markedChannels.json")
 
