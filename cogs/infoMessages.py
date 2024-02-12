@@ -1,4 +1,4 @@
-from sharedFunctions import getServerInfo, json_read, json_write, validateAddress, admin_check
+from sharedFunctions import getServerInfo, json_read, json_write, validate_address, admin_only
 from discord.ext import commands, tasks
 from config import Settings
 import discord
@@ -26,22 +26,22 @@ class InfoMessages(commands.Cog):
         self.bot = client
         
     @commands.command()
+    @validate_address
+    @admin_only
     async def info(self, ctx, route : str):
-        address = await validateAddress(ctx, route)
-        if not address:
-            return
+        address = route.split(":")
+        address = (address[0], int(address[1]))
         info = a2s.info(address)
         return await ctx.send(f"{str(info)}")
 
     @commands.command()
+    @validate_address
+    @admin_only
     async def infoMessage(self, ctx, address_string: str):
         '''Makes an embed that will auto update information about a server'''
-        if not await admin_check(ctx):
-            return
 
-        address = await validateAddress(ctx, address_string)
-        if not address:
-            return
+        address = address_string.split(":")
+        address = (address[0], int(address[1]))
         
         # make the embed for displaying the server info
         embed = makeServerEmbed(address)
